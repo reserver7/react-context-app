@@ -1,5 +1,5 @@
 # react-context-App
-![Disney01](https://github.com/reserver7/react-disney-plus-app/assets/78328320/95c447e4-eaf3-4e26-a0f7-ddc901585b90)
+![context](https://github.com/reserver7/react-context-app/assets/78328320/dda0fc02-e995-4757-af87-b613cc606d01)
 
 ## 프로젝트에 사용한 기술
 ### React, axios, useContext
