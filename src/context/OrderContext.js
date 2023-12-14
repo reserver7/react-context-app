@@ -1,6 +1,6 @@
-import { createContext, useState, useMemo, useEffect } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 
-const OrderContext = createContext();
+export const OrderContext = createContext();
 
 export function OrderContextProvider(props) {
   const [orderCounts, setOrderCounts] = useState({
@@ -19,18 +19,7 @@ export function OrderContextProvider(props) {
     options: 500,
   };
 
-  useEffect(() => {
-    const productsTotal = calculateSubTotal("products", orderCounts);
-    const optionsTotal = calculateSubTotal("options", orderCounts);
-    const total = productsTotal + optionsTotal;
-    setTotals({
-      products: productsTotal,
-      options: optionsTotal,
-      total,
-    });
-  }, [orderCounts]);
-
-  const calculateSubTotal = (orderType, orderCounts) => {
+  const calculateSubtotal = (orderType, orderCounts) => {
     let optionCount = 0;
     for (const count of orderCounts[orderType].values()) {
       optionCount += count;
@@ -39,18 +28,29 @@ export function OrderContextProvider(props) {
     return optionCount * pricePerItem[orderType];
   };
 
+  useEffect(() => {
+    const productsTotal = calculateSubtotal("products", orderCounts);
+    const optionsTotal = calculateSubtotal("options", orderCounts);
+    const total = productsTotal + optionsTotal;
+    setTotals({
+      products: productsTotal,
+      options: optionsTotal,
+      total,
+    });
+  }, [orderCounts]);
+
   const value = useMemo(() => {
     function updateItemCount(itemName, newItemCount, orderType) {
-      const newOrderCount = { ...orderCounts };
-      const orderCountsMap = orderCounts[orderType];
+      const newOrderCounts = { ...orderCounts };
 
+      const orderCountsMap = orderCounts[orderType];
       orderCountsMap.set(itemName, parseInt(newItemCount));
 
-      setOrderCounts(newOrderCount);
+      setOrderCounts(newOrderCounts);
     }
 
-    return [{ ...orderCounts, totals }, updateItemCount];
-  }, [orderCounts]);
+    return [{ ...orderCounts, totals }, updateItemCount, pricePerItem];
+  }, [orderCounts, totals]);
 
   return <OrderContext.Provider value={value} {...props} />;
 }
